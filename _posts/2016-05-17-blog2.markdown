@@ -1,0 +1,55 @@
+---
+layout: post
+title:  "浅谈spring与hibernate近些年来版本的变化"
+date:   2016-05-17 22:53:58 +0800
+categories: blog2
+---
+SSH这一套框架想必接触过JavaWeb开发的人都应该比较了解，我是大三开始接触JavaWeb的，当时学习的资料也是比较老，所以学习时运用的框架版本也相对比较老。当然，初学者从老的版本开始看也是可以的，底层的东西变化不会太大，一般都是添加一些新功能(比如现在流行的注解功能也在不断更新)或者删除一些老旧的东西。我也对比过老框架与新框架整合时配置文件的异同，总体来说变化不大.Stuts2的jar包近些年来没有什么大变化的更新，就先从hibernate说起吧.
+
+我最早接触的hibernate版本是3.0,而关于这个版本的hibernate的书籍也是比较多的(毕竟框架更新换代太快，并且基本思想不会变).大家在学习基础的时候呢，主要要搞清楚以下几点:
+
+1、首先是hibernate的工作流程：读取并解析配置文件、读取并解析映射信息，创建sessionFactory、打开Session、创建事务Transaction、持久化操作、提交事务、关闭Session. 如果整合了spring,那么在配置好spring的xml文件后就可以运用SessionFactory和事务的注解简化操作，我们就只需要在server层来完成持久化操作并返回值即可.
+
+2、配置文件和映射文件中一些常用标签的用法.比如说映射文件中id主键的生成策略，lazy延时加载的用途等.
+
+3、ORM对象关系映射模式:主要由属性映射、类映射、关联映射、一对一、一对多，多对多，这个是重点也是难点，一定要搞清楚.
+
+4、理解session的一级、二级缓存以及事务的用法，简单来说在使用session调用操作数据库的方法时，并没有直接操作本地数据库，而是将操作的值放在缓存里，当我们提交事务后，hibernate才会真正的调用数据库.
+
+5、hibernate对象的三种状态.即临时态、持久态与游离态.简单来说临时态指指通过new新创建的与session没有关联的对象，数据库中没有对应记录.持久态指受session关联的在数据库中有对应记录的对象.而游离态则指没有和session关联但是在数据库中有对应记录的对象，这三种状态是可以互相转化的.
+
+6、hibernate的三种查询方式(HQL、Criteria、SQL)HQL使用相对较多，下来是SQL.HQL语句是通过向session.creatQuery()这个方法中注入语句来获取信息，SQL则是通过session.createSQLQuery()来注入.HQL的优势是提供了面向对象的封装，可以直接返回一个对象，而SQL只是面向数据查询，但相对要灵活一些.
+
+接下来说一说各个版本创建sessionFactory时的区别.hibernate3在创建SessionFactory时，只需要用读取了配置文件的 cfg对象来直接调用 buildSessionFactory() 方法.而在hibernate4中呢，它废弃了原先的这种方法，加入了一个注册服务对象serviceRegistry,所以要创建需要通过 
+
+Configuration cfg = new Configuration().configure();
+
+ServiceRegistry sR = new ServiceRegistryBuilder()
+
+.applySettings(cfg.getProperties())
+
+.buildServiceRegistry()
+
+sessionFactory = config.buildSessionFactory(serviceRegistry);
+
+并且hibernate从4.1开始可以自动建表，所以开发时只需要自己开发类然后配置好就OK.不需要考虑怎么建表,同时也开始推荐使用注解的方式配置映射等等.而hibernate5创建sessionFactory的方式有较大变化(当然，若是整合了spring,我们就不必去考虑如何创建sessionFactory了,通过配置好注解信息容器会帮我们创建).hibernate5不再显式的使用Configuration类代表配置信息，而是新增了一个Metadata类来处理，SessionFactory的创建从Metadata实例中获得一个创建者，然后调用改创建者的build()方法获得SessionFactory.这是典型的创建者模式.如下:
+
+StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build();
+
+Metadata metadata = new MetadataSources(serviceRegistry)
+
+.addAnnotatedClass(Domain.class)
+
+.addAnnotatedClassName("Domain的包名")
+
+.addResource("Domain的映射文件位置")
+
+.getMetadataBuilder()
+
+.applyImplicitNamingStrategy(ImplicitNamingStrategyJpaCompliantImpl.INSTANCE).build();
+
+sessionFactory = metadata.getSessionFactoryBuilder().build();
+
+再来说说Spring.我接触的第一个spring版本是2.5，spring相信大家都知道，最核心的内容就是依赖注入与控制反转.最早的spring版本都是通过配置spring的xml文件来将项目中需要动态注入的对象放到spring容器中管理.最早呢是通过对setter方法的反射以及构造器的反射来实现对象的注入，可是当需要管理的对象比较多时，这样就显得xml文件比较臃肿，而spring2.5这个版本的已经开始支持通过注解来自动扫描并且装配bean对象，最常用的是通过  context:component-scan base-package=""  标签来向标记了@Service、@Controller等注解的类动态注入依赖对象(标签本身没有实际效果，但这个标签背后也会注册很多处理器).而spring3.0这个版本呢主要是增强了spring的MVC框架(底层其实还是Servlet,在这个版本中，我们在配置Servlet的地址映射时就可以使用@WebServlet而不用必须在web.xml中配置了)，并且提前对JavaEE6提供支持，相对而言除了增加了一些API并没有太大的变化.而spring4这个版本变化就比较大了，它主要增强了对Java8、JavaEE7、REST和HTML5的支持，将jar包划分的更加细致.另外，它还包含一个新的名为Spring Boot的项目.Spring Boot是一个新Spring技术，该技术的目标是让Java开发也能够实现Ruby on Rails那样的生产效率.更加具体的变化我也就不在这累赘了，在我的github中也有关于Struts2+hibernate5+spring4的框架整合，有需要的同学可以去看一下.
+
+

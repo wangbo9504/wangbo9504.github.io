@@ -1,33 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <title>Document</title>
-    
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <style>       
-        body {
-            margin-top: 70px;
-            background-image: url(img/highlight-bg.jpg);
-            background-size: cover;
-            filter : progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale' , src='img/highlight-bg.jpg') 
-        }
-        .nav li a{
-            padding-right: 35px;
-        }
-        .nav li a:hover {
-            color: aqua;
-        }
-      
-            
-    </style>
-</head>
-<body>
-   <!-- 鼠标悬停直接显示下拉菜单并固定在顶部 -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+---
+layout: default
+---
+
+<div class="home">
+  
+  <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a href="#" class="navbar-brand"><img src="img/brand.png" /></a>
@@ -36,7 +13,6 @@
                 <li class="active" role="presentation"><a href="#">首页</a></li>
                 <li><a href="introduction/info.html">个人简历</a></li>
                 <li><a href="#">个人作品</a></li>
-                <li><a href="#">个人博客</a></li>
                 <li><a href="#">联系我</a></li>
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
@@ -47,41 +23,20 @@
             </ul>
         </div>
     </nav>
-    
-    <!--轮播图-->
-    <!--设置data-interval可以改变轮播时间-->
-    <div class="container">
-       <div id="myCarousel" class="carousel" data-interval="2000"> 
-        <!-- 轮播（Carousel）指标 -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-        </ol> 
-        <!-- 轮播（Carousel）项目 -->
-        <div class="carousel-inner">
-           <div class="item active">
-             <img src="img/1150x600.png" alt="火影1"/>
-             <div class="carousel-caption">仙人模式</div>
-          </div>
-          <div class="item">
-              <img src="img/1150x600h2.png" alt="火影2"/>
-             <div class="carousel-caption">终结之谷</div>
-          </div>
-          <div class="item">
-              <img src="img/1150x600h3.png" alt="火影3"/>
-             <div class="carousel-caption">火影忍者</div>
-          </div>
-        </div> 
-        <!-- 轮播（Carousel）导航 -->
-        <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-        <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-        </div>
-    </div> 
-    
-    
-    <!-- 加载jQuery库必须在bootstrap之前-->
-    <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-</body>
-</html>
+
+  <h1 class="page-heading">博客列表(点击标题跳转到详细页面)</h1>
+
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+        <h2>
+          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+
+        </h2>
+      </li>
+    {% endfor %}
+  </ul>
+
+</div>

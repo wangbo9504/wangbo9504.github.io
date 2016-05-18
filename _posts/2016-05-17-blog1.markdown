@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "我的第一个博客~"
+date:   2016-05-17 21:39:58 +0800
+categories: blog1
+---
+经过了几天的捣腾，终于将我的个人博客建好了，还是挺高兴的。总结一下建立整个博客的过程吧。首先呢，由于服务器是绑定在github上的，所以要注册一个github的账号，之后建立一个 用户名.github,io的仓库，之前搞过github的人应该知道原先的开发者页面是github.com，而github官网为了避免向量跨域名攻击、依托GitHub进行的钓鱼网站攻击，所以将原先的开发者页面迁移到了github.io这个域名里.建好这个仓库后我们就可以用仓库的名字来访问页面了.如果不喜欢github默认的域名而想绑定一个自己的域名，可以在项目下建一个CNAME的文本，里面输入解析好的域名就可以在访问页面是跳转到你的域名了.
+
+博客的搭建呢，我用的是Jekyll这个工具，Jekyll是什么？它是一个简单静态博客生成工具，为什么是静态，因为它是不需要数据库的，通过markdown编写静态文件，生成Html页面，它的优点是提升了页面的响应速度，并且让博主可以只专注于写文章，不用再去考虑如何排版(markdown语法很好的解决了排版
+问题).搭建的环境呢，需要先在本地主机上安装Ruby和Devkit，因为jekyll各个模块的安装需要依赖gem这个命令，而这个命令又需要Ruby这个脚本环境，所以我们需要一步步搭建好jekyll所依赖的环境，具体的安装可以参考:[ruby环境搭建].
+
+jekyll安装好了之后，我们就可以在命令行里用jekyll new blog这个命令来创建jekyll的模板文件，创建完就可以进入模板文件后使用jekyll serve 命令来开启jekyll服务，之后输入http://localhost:4000就可以在本地访问这个博客模板.模板各个文件夹的功能如下:
+    
+1. 文件夹_layouts：用于存放模板的文件夹，里面有两个模板，default.html和post.html
+2. 文件夹_posts：用于存放博客文章的文件夹，里面有一篇markdown格式的文章--2014-01-27-welcome-to-jekyll.markdown
+3. 文件夹css：存放博客所用css的文件夹
+4. .gitignore：可以删掉，后面会将项目添加到git项目，所以这个不需要了
+5. _coinfig.yml：jekyll的配置文件，里面可以定义相当多的配置参数，具体配置参数可以参照其官网
+6. index.html：项目的首页
+
+根据实际需要，可能还需要创建如下文件或文件夹:
+
+1. _includes:用于存放一些固定的HTML代码段，文件为.html格式，可以在模板中通过liquid标签引入，常用来在各个模板中复用如 导航条、标签栏、侧边栏 之类的在每个页面上都一样不变的内容，需要注意的是，这个代码段也可以是未被编译的，也就是说也可以使用liquid标签放在这些代码段中
+2. image和js等自定义文件夹：用来存放一些需要的资源文件，如图片或者javascript文件，可以任意命名
+3. CNAME文件：用来在github上做域名绑定的，将在后面介绍
+4. favicon.ico：网站的小图标
+
+[jekyll-docs]: http://jekyllrb.com/docs/home
+[jekyll-gh]:   https://github.com/jekyll/jekyll
+[jekyll-talk]: https://talk.jekyllrb.com/
+[ruby环境搭建]: http://blog.csdn.net/kong5090041/article/details/38408211
